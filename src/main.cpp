@@ -1,51 +1,44 @@
 #include <iostream>
+#include <string>
 #include <cstring>      // For memset
-#include <sys/socket.h> // For socket functions
-#include <netinet/ip.h> // For iphdr struct
-#include <arpa/inet.h>  // For inet_ntoa
-#include <unistd.h>     // For close()
+#include <limits>
+
+
+
+void Register(){
+
+    std::cout << std::string(50,'=') << std::endl;
+    std::cout << std::string(18,' ') << "Register menu" << std::endl;
+    std::cout << std::string(50,'=') << std::endl;
+
+}
+
+// A normal login menu
+// but if User Id is 1 and there is no user credential stored
+// call Register to create a new account
+void Menu(){
+
+    std::string enterId, enterPassword;
+
+    std::cout << std::string(50,'=') << std::endl;
+    std::cout << std::string(20,' ') << "Login menu" << std::endl;
+    std::cout << std::string(50,'=') << std::endl;
+
+    std::cout << "User  ID:";
+    std::getline(std::cin,enterId);
+    std::cout << "Password:";
+    std::getline(std::cin,enterPassword);
+    // std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n'); // Ignore the newline character, if any
+    // if(enterId == "1")
+    Register();
+
+}
+
+
 
 int main() {
 
-    int sock_raw;
-    struct sockaddr_in source, dest;
-    socklen_t saddr_size;
-    unsigned char *buffer = new unsigned char[65536];
-    
-    // Create a raw socket
-    sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
-    if (sock_raw < 0) {
-        std::cerr << "Socket Error" << std::endl;
-        return 1;
-    }
-
-    std::cout << "[+] MiniWall Started - Listening for TCP Packets..." << std::endl;
-
-    while (true) {
-        saddr_size = sizeof(source);
-        // Receive a packet
-        int data_size = recvfrom(sock_raw, buffer, 65536, 0, (struct sockaddr*)&source, &saddr_size);
-        if (data_size < 0) {
-            std::cerr << "Recvfrom error" << std::endl;
-            return 1;
-        }
-
-        struct iphdr *ip = (struct iphdr*)buffer;
-
-        memset(&source, 0, sizeof(source));
-        source.sin_addr.s_addr = ip->saddr;
-
-        memset(&dest, 0, sizeof(dest));
-        dest.sin_addr.s_addr = ip->daddr;
-
-        std::cout << "[+] Packet: " 
-                  << inet_ntoa(source.sin_addr) 
-                  << " --> " 
-                  << inet_ntoa(dest.sin_addr) 
-                  << std::endl;
-    }
-
-    close(sock_raw);
-    delete[] buffer;
+    std::cout << "Lightweight Firewall Started" << std::endl;
+    Menu();
     return 0;
 }
